@@ -29,7 +29,9 @@ func main() {
 
 	http.HandleFunc("/createuser", app.CreateUser)
 	http.HandleFunc("/login", app.LoginUser)
-	http.HandleFunc("/buy", app.PurchaseSymbol)
+
+	http.Handle("/buy", app.Authenticate(http.HandlerFunc(app.PurchaseSymbol)))
+	http.Handle("/list", app.Authenticate(http.HandlerFunc(app.ListStocks)))
 
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }

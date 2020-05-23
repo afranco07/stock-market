@@ -2,9 +2,7 @@ package routes
 
 import (
 	"encoding/json"
-	"github.com/dgrijalva/jwt-go"
 	"github.com/google/uuid"
-	"log"
 	"net/http"
 )
 
@@ -13,44 +11,30 @@ type PurchaseRequest struct {
 	Amount int    `json:"amount"`
 }
 
+// PurchaseSymbol buys r.amount stocks of symbol r.symbol
 func (app *App) PurchaseSymbol(w http.ResponseWriter, r *http.Request) {
-	authCookie, err := r.Cookie("jwt-token")
-	if err != nil {
-		w.WriteHeader(http.StatusUnauthorized)
+	claims := r.Context().Value("claims")
+	if claims == nil {
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
-	type Claims struct {
-		Email string `json:"email"`
-		ID    string `json:"id"`
-		jwt.StandardClaims
-	}
-	tokenString := authCookie.Value
-	token, err := jwt.ParseWithClaims(tokenString, &Claims{}, func(token *jwt.Token) (interface{}, error) {
-		return tokenSignature, nil
-	})
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		return
-	}
-	if !token.Valid {
-		w.WriteHeader(http.StatusUnauthorized)
+	c, ok := claims.(*jwtClaims)
+	if !ok {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("error type asserting claims"))
 		return
 	}
 
 	var pr PurchaseRequest
-	err = json.NewDecoder(r.Body).Decode(&pr)
+	err := json.NewDecoder(r.Body).Decode(&pr)
 	if err != nil {
-		log.Fatal(err)
-	}
-
-	claims, ok := token.Claims.(*Claims)
-	if !ok {
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("error asserting claims"))
+		w.Write([]byte("error decoding r.body"))
 		return
 	}
-	user, err := app.getUserByID(claims.ID)
+
+	user, err := app.getUserByID(c.ID)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte(err.Error()))
