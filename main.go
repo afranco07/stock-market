@@ -28,6 +28,8 @@ func main() {
 	app := routes.App{DB: db}
 
 	http.HandleFunc("/createuser", app.CreateUser)
+	http.HandleFunc("/login", app.LoginUser)
+	http.HandleFunc("/buy", app.PurchaseSymbol)
 
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
