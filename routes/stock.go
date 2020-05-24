@@ -81,5 +81,10 @@ func (app *App) insertStock(quote globalQuote, user *User, quantity int) error {
 		return err
 	}
 
+	newBalance := user.Cash - quote.Price
+	_, err = app.DB.Exec("UPDATE account SET cash = $1 WHERE id = $2", newBalance, user.ID)
+	if err != nil {
+		return err
+	}
 	return nil
 }

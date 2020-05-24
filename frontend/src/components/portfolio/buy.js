@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import { add } from "../../features/stocks/stocksSlice"
@@ -12,6 +12,20 @@ export default function Buy() {
     const [buying, setBuying] = useState(false);
     const cash = useSelector(selectCash);
     const dispatch = useDispatch();
+
+    useEffect(() => {
+        fetch("/cash", {
+            method: "GET",
+            headers: {
+                "Content-TYpe": "application/json",
+                "Accept": "application/json",
+            }
+        })
+            .then(res => res.json())
+            .then(cashData => {
+                dispatch(setCash(cashData.cash));
+            })
+    }, [dispatch]);
 
     const submitPurchase = (e) => {
         e.preventDefault();
