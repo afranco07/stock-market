@@ -3,14 +3,17 @@ import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import {add} from "../../features/stocks/stocksSlice"
 import {useDispatch} from "react-redux";
+import Spinner from 'react-bootstrap/Spinner';
 
 export default function Buy() {
     const [ticker, setTicker] = useState("");
     const [amount, setAmount] = useState("");
+    const [buying, setBuying] = useState(false);
     const dispatch = useDispatch();
 
     const submitPurchase = (e) => {
         e.preventDefault();
+        setBuying(true);
         fetch("/buy", {
             method: "POST",
             headers: {
@@ -24,6 +27,7 @@ export default function Buy() {
                 dispatch(add(stockData))
                 setTicker("");
                 setAmount("");
+                setBuying(false);
             })
     };
     return(
@@ -36,8 +40,8 @@ export default function Buy() {
             <Form.Group controlId="qty">
                 <Form.Control type="number" placeholder="Qty" value={amount} onChange={(e) => setAmount(e.target.value)} />
             </Form.Group>
-            <Button variant="primary" block type="submit">
-                Submit
+            <Button variant="primary" block type="submit" disabled={buying}>
+                {buying ? <Spinner animation="border" size="sm" role="status" as="span"/> : "Submit"}
             </Button>
         </Form>
     );
