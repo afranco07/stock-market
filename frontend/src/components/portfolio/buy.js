@@ -1,10 +1,13 @@
 import React, {useState} from 'react';
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
+import {add} from "../../features/stocks/stocksSlice"
+import {useDispatch} from "react-redux";
 
 export default function Buy() {
     const [ticker, setTicker] = useState("");
     const [amount, setAmount] = useState("");
+    const dispatch = useDispatch();
 
     const submitPurchase = (e) => {
         e.preventDefault();
@@ -17,7 +20,8 @@ export default function Buy() {
             body: JSON.stringify({symbol: ticker, amount: parseInt(amount)})
         })
             .then(res => res.json())
-            .then(() => {
+            .then(stockData => {
+                dispatch(add(stockData))
                 setTicker("");
                 setAmount("");
             })

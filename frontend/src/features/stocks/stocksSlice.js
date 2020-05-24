@@ -7,7 +7,7 @@ export const stocksSlice = createSlice({
     },
     reducers: {
         add: (state, action) => {
-            state.stocks = [...state.stocks, ...action.payload];
+            state.stocks = [...state.stocks, action.payload];
         },
         setStocks: (state, action) => {
             state.stocks = [...action.payload];

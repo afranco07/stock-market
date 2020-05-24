@@ -54,6 +54,19 @@ func (app *App) PurchaseSymbol(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("error inserting purchase data"))
 		return
 	}
+
+	s := stock{
+		Symbol: quote.Symbol,
+		Price:  quote.Price,
+		Amount: pr.Amount,
+	}
+	stockBytes, err := json.Marshal(s)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(stockBytes)
 }
 
 func (app *App) insertStock(quote globalQuote, user *User, quantity int) error {
