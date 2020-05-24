@@ -29,6 +29,7 @@ func main() {
 
 	http.HandleFunc("/createuser", app.CreateUser)
 	http.HandleFunc("/login", app.LoginUser)
+	http.HandleFunc("/auth", app.CheckAuth)
 
 	http.Handle("/buy", app.Authenticate(http.HandlerFunc(app.PurchaseSymbol)))
 	http.Handle("/list", app.Authenticate(http.HandlerFunc(app.ListStocks)))
