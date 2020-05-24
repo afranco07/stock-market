@@ -5,14 +5,17 @@ import StockTable from "./stockTable";
 import Buy from "./buy";
 
 export default function Portfolio() {
-    return(
-        <Row>
-            <Col>
-                <StockTable />
-            </Col>
-            <Col>
-                <Buy />
-            </Col>
-        </Row>
+    return (
+        <>
+            <h2>Portfolio</h2>
+            <Row>
+                <Col>
+                    <StockTable/>
+                </Col>
+                <Col>
+                    <Buy/>
+                </Col>
+            </Row>
+        </>
     );
 }

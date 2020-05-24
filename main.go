@@ -32,6 +32,7 @@ func main() {
 
 	http.Handle("/buy", app.Authenticate(http.HandlerFunc(app.PurchaseSymbol)))
 	http.Handle("/list", app.Authenticate(http.HandlerFunc(app.ListStocks)))
+	http.Handle("/transactions", app.Authenticate(http.HandlerFunc(app.ListTransactions)))
 
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }

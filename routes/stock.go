@@ -76,7 +76,7 @@ func (app *App) insertStock(quote globalQuote, user *User, quantity int) error {
 		return err
 	}
 
-	_, err = app.DB.Exec("INSERT INTO transactions VALUES ($1, $2, $3, $4, $5)", user.ID, "BUY", quote.Symbol, quantity, quote.Price)
+	_, err = app.DB.Exec("INSERT INTO transactions(account, action, symbol, amount, price) VALUES ($1, $2, $3, $4, $5)", user.ID, "BUY", quote.Symbol, quantity, quote.Price)
 	if err != nil {
 		return err
 	}

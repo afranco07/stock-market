@@ -10,6 +10,7 @@ import Login from './components/login';
 import Register from './components/register';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Portfolio from "./components/portfolio";
+import Transactions from "./components/transactions";
 
 function App() {
     return (
@@ -27,7 +28,9 @@ function App() {
                             <Register />
                         </Route>
                         <Route exact path="/list"></Route>
-                        <Route exact path="/transactions"></Route>
+                        <Route exact path="/transactions">
+                            <Transactions />
+                        </Route>
                         <Route exact path="/portfolio">
                             <Portfolio />
                         </Route>

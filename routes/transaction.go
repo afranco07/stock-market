@@ -5,14 +5,15 @@ import (
 	"net/http"
 )
 
-type stock struct {
+type transaction struct {
+	Action string  `json:"action"`
 	Symbol string  `json:"symbol"`
-	Price  float32 `json:"price"`
 	Amount int     `json:"amount"`
+	Price  float32 `json:"price"`
 }
 
-// ListStocks lists all of the users stocks
-func (app *App) ListStocks(w http.ResponseWriter, r *http.Request) {
+// ListTransactions returns all of the users transactions
+func (app *App) ListTransactions(w http.ResponseWriter, r *http.Request) {
 	claims := r.Context().Value("claims")
 	if claims == nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -26,30 +27,33 @@ func (app *App) ListStocks(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	rows, err := app.DB.Query("SELECT symbol, price, amount FROM stocks WHERE account = $1", c.ID)
+	rows, err := app.DB.Query("SELECT action, symbol, amount, price FROM transactions WHERE account = $1", c.ID)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
+		return
 	}
 	defer rows.Close()
 
-	stocks := make([]stock, 0)
+	transactions := make([]transaction, 0)
 	for rows != nil && rows.Next() {
-		var s stock
-		err := rows.Scan(&s.Symbol, &s.Price, &s.Amount)
+		var t transaction
+		err := rows.Scan(&t.Action, &t.Symbol, &t.Amount, &t.Price)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			w.Write([]byte(err.Error()))
 			return
 		}
-		stocks = append(stocks, s)
+		transactions = append(transactions, t)
 	}
 
-	stockBytes, err := json.Marshal(stocks)
+	transBytes, err := json.Marshal(transactions)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
+		return
 	}
+
 	w.Header().Set("Content-Type", "application/json")
-	w.Write(stockBytes)
+	w.Write(transBytes)
 }
