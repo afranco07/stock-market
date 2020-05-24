@@ -107,3 +107,37 @@ func (app *App) getUserByID(id string) (User, error) {
 
 	return u, nil
 }
+
+// GetCash returns the users current balance
+func (app *App) GetCash(w http.ResponseWriter, r *http.Request) {
+	claims := r.Context().Value("claims")
+	if claims == nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	c, ok := claims.(*jwtClaims)
+	if !ok {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("error type asserting claims"))
+		return
+	}
+
+	u, err := app.getUserByID(c.ID)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	jsonBytes, err := json.Marshal(struct {
+		Cash float32 `json:"cash"`
+	}{u.Cash})
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(jsonBytes)
+}
