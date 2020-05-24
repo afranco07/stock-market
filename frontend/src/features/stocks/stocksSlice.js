@@ -10,7 +10,9 @@ export const stocksSlice = createSlice({
             state.stocks = [...state.stocks, action.payload];
         },
         setStocks: (state, action) => {
-            state.stocks = [...action.payload];
+            if (action.payload) {
+                state.stocks = [...action.payload];
+            }
         },
     },
 });

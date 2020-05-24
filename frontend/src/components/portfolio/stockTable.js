@@ -20,7 +20,7 @@ export default function StockTable() {
                 console.log(stockData);
                 dispatch(setStocks(stockData))
             });
-    }, [dispatch, stocks])
+    }, [dispatch])
 
     return (
         <Table>
