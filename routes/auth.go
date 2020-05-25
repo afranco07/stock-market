@@ -28,10 +28,12 @@ func (app *App) Authenticate(next http.Handler) http.Handler {
 		})
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte(err.Error()))
 			return
 		}
 		if !token.Valid {
 			w.WriteHeader(http.StatusUnauthorized)
+			w.Write([]byte("token is not valid"))
 			return
 		}
 
