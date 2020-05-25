@@ -2,7 +2,7 @@
 
 CREATE TABLE account (
     id uuid PRIMARY KEY,
-    email varchar(250),
+    email varchar(250) UNIQUE,
     password varchar(250),
     cash float
 );

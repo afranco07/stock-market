@@ -42,6 +42,8 @@ func (app *App) CreateUser(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(err.Error()))
 		return
 	}
+
+	w.WriteHeader(http.StatusCreated)
 }
 
 // LoginUser checks jwt, logs in the user, and sets jwt cookie
