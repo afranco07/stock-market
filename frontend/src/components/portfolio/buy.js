@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
-import { add } from "../../features/stocks/stocksSlice"
+// import { add } from "../../features/stocks/stocksSlice"
 import { selectCash, setCash } from "../../features/user/userSlice";
 import {useDispatch, useSelector} from "react-redux";
 import Spinner from 'react-bootstrap/Spinner';
@@ -59,7 +59,7 @@ export default function Buy() {
                 return res.json()
             })
             .then(stockData => {
-                dispatch(add(stockData))
+                // dispatch(add(stockData))
                 setTicker("");
                 setAmount("");
                 dispatch(setCash(cash - stockData.price));

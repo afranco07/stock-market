@@ -54,28 +54,74 @@ func (app *App) LoginUser(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(err.Error()))
 		return
 	}
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"email": user.Email,
-		"id":    user.ID,
-		"exp":   time.Now().Add(time.Minute * 1).Unix(),
-	})
 
-	tokenString, err := token.SignedString(tokenSignature)
+	err = generateTokens(w, user.ID)
 	if err != nil {
 		w.WriteHeader(http.StatusUnauthorized)
 		w.Write([]byte(err.Error()))
 		return
 	}
+	//token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+	//	//"email": user.Email,
+	//	"id":    user.ID,
+	//	"exp":   time.Now().Add(time.Minute * 1).Unix(),
+	//})
+	//
+	//tokenString, err := token.SignedString(tokenSignature)
+	//if err != nil {
+	//	w.WriteHeader(http.StatusUnauthorized)
+	//	w.Write([]byte(err.Error()))
+	//	return
+	//}
+	//
+	//refreshToken := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+	//	"id": user.ID,
+	//	"exp": time.Now().Add(time.Minute * 3).Unix(),
+	//})
+	//
+	//rtString, err := refreshToken.SignedString(tokenSignature)
+	//if err != nil {
+	//	w.WriteHeader(http.StatusUnauthorized)
+	//	w.Write([]byte(err.Error()))
+	//	return
+	//}
+	//
+	//cookie := http.Cookie{
+	//	Name:  "jwt-token",
+	//	Value: tokenString,
+	//}
+	//refreshCookie := http.Cookie{
+	//	Name:  "jwt-refresh-token",
+	//	Value: rtString,
+	//}
+	//http.SetCookie(w, &cookie)
+	//http.SetCookie(w, &refreshCookie)
+}
+
+func generateTokens(w http.ResponseWriter, userID string) error {
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		//"email": user.Email,
+		"id":  userID,
+		"exp": time.Now().Add(time.Minute * 1).Unix(),
+	})
+
+	tokenString, err := token.SignedString(tokenSignature)
+	if err != nil {
+		//w.WriteHeader(http.StatusUnauthorized)
+		//w.Write([]byte(err.Error()))
+		return err
+	}
 
 	refreshToken := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"id":  userID,
 		"exp": time.Now().Add(time.Minute * 3).Unix(),
 	})
 
 	rtString, err := refreshToken.SignedString(tokenSignature)
 	if err != nil {
-		w.WriteHeader(http.StatusUnauthorized)
-		w.Write([]byte(err.Error()))
-		return
+		//w.WriteHeader(http.StatusUnauthorized)
+		//w.Write([]byte(err.Error()))
+		return err
 	}
 
 	cookie := http.Cookie{
@@ -88,6 +134,8 @@ func (app *App) LoginUser(w http.ResponseWriter, r *http.Request) {
 	}
 	http.SetCookie(w, &cookie)
 	http.SetCookie(w, &refreshCookie)
+
+	return nil
 }
 
 func (app *App) getUser(r io.Reader) (User, error) {

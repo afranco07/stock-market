@@ -7,12 +7,15 @@ import Card from 'react-bootstrap/Card';
 import Spinner from "react-bootstrap/Spinner";
 import Alert from 'react-bootstrap/Alert'
 import { useHistory } from "react-router-dom";
+import { setAuth } from "../../features/user/userSlice"
+import {useDispatch} from "react-redux";
 
 export default function Login() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [loggingIn, setLogin] = useState(false);
     const [showError, setError] = useState(false);
+    const dispatch = useDispatch();
     const history = useHistory();
 
     const submitLogin = (e) => {
@@ -34,6 +37,7 @@ export default function Login() {
                     throw new Error("error logging in")
                 }
                 setError(false);
+                dispatch(setAuth(true));
                 history.replace("/portfolio");
             })
             .catch(() => {
