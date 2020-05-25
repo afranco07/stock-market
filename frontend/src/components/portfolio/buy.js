@@ -5,6 +5,7 @@ import { add } from "../../features/stocks/stocksSlice"
 import { selectCash, setCash } from "../../features/user/userSlice";
 import {useDispatch, useSelector} from "react-redux";
 import Spinner from 'react-bootstrap/Spinner';
+import { useHistory } from "react-router-dom";
 
 export default function Buy() {
     const [ticker, setTicker] = useState("");
@@ -12,6 +13,7 @@ export default function Buy() {
     const [buying, setBuying] = useState(false);
     const cash = useSelector(selectCash);
     const dispatch = useDispatch();
+    const history = useHistory();
 
     useEffect(() => {
         fetch("/cash", {
@@ -21,10 +23,18 @@ export default function Buy() {
                 "Accept": "application/json",
             }
         })
-            .then(res => res.json())
+            .then(res => {
+                if (!res.ok) {
+                    throw new Error("error getting balance");
+                }
+                return res.json();
+            })
             .then(cashData => {
                 dispatch(setCash(cashData.cash));
             })
+            .catch(() => {
+                history.replace("/login");
+            });
     }, [dispatch]);
 
     const submitPurchase = (e) => {
