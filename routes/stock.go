@@ -71,7 +71,13 @@ func (app *App) PurchaseSymbol(w http.ResponseWriter, r *http.Request) {
 
 func (app *App) insertStock(quote globalQuote, user *User, quantity int) error {
 	id := uuid.New().String()
-	_, err := app.DB.Exec("INSERT INTO stocks VALUES ($1, $2, $3, $4, $5)", id, user.ID, quote.Symbol, quote.Price, quantity)
+	_, err := app.DB.Exec("INSERT INTO stocks VALUES ($1, $2, $3, $4, $5) ON CONFLICT (account, symbol) DO UPDATE SET price = stocks.price + $4, amount = stocks.amount + $5",
+		id,
+		user.ID,
+		quote.Symbol,
+		quote.Price,
+		quantity,
+	)
 	if err != nil {
 		return err
 	}

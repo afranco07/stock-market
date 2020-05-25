@@ -12,7 +12,8 @@ CREATE TABLE stocks (
     account uuid REFERENCES account(id),
     symbol varchar(6),
     price float,
-    amount int
+    amount int,
+    UNIQUE (account, symbol)
 );
 
 CREATE TABLE transactions (
