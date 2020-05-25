@@ -4,9 +4,11 @@ import ListGroup from 'react-bootstrap/ListGroup'
 import {useDispatch, useSelector} from "react-redux";
 import {selectTransactions, setTransactions} from "../../features/transactions/transactionsSlice";
 import Col from "react-bootstrap/Col";
+import { useHistory } from "react-router-dom";
 
 export default function Transactions() {
     const dispatch = useDispatch();
+    const history = useHistory();
     const transactions = useSelector(selectTransactions);
 
     useEffect(() => {
@@ -17,8 +19,16 @@ export default function Transactions() {
                 "Content-Type": "application/json"
             },
         })
-            .then(res => res.json())
+            .then(res => {
+                if (!res.ok) {
+                    throw new Error("error retreiving transactions");
+                }
+                return res.json();
+            })
             .then(transactionData => dispatch(setTransactions(transactionData)))
+            .catch(() => {
+                history.replace("/login");
+            });
     }, [dispatch])
     return (
         <>
