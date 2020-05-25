@@ -64,7 +64,7 @@ export default function Buy() {
                 <Form.Control type="input" placeholder="Ticker" value={ticker} onChange={(e) => setTicker(e.target.value)}/>
             </Form.Group>
             <Form.Group controlId="qty">
-                <Form.Control type="number" min="1" placeholder="Qty" value={amount} onChange={(e) => setAmount(e.target.value)} />
+                <Form.Control type="number" min="1" placeholder="Qty" value={amount} onChange={(e) => setAmount(e.target.value)} pattern="\d+"/>
             </Form.Group>
             <Button variant="primary" block type="submit" disabled={buying || ticker.length < 1}>
                 {buying ? <Spinner animation="border" size="sm" role="status" as="span"/> : "Submit"}
