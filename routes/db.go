@@ -16,6 +16,7 @@ const (
 	baseURL         = "https://www.alphavantage.co"
 	defaultInterval = "5min"
 	apiLink         = "%s/query?function=%s&symbol=%s&interval=%s&apikey=%s"
+	searchLink      = "%s/query?function=%s&keywords=%s&apikey=%s"
 )
 
 type apiFunction string
@@ -23,7 +24,8 @@ type apiFunction string
 const (
 	//functionIntraDay    apiFunction = "TIME_SERIES_INTRADAY"
 	//functionSeriesDaily apiFunction = "TIME_SERIES_DAILY"
-	functionQuote apiFunction = "GLOBAL_QUOTE"
+	functionQuote  apiFunction = "GLOBAL_QUOTE"
+	functionSearch apiFunction = "SYMBOL_SEARCH"
 )
 
 type quoteResponse struct {
@@ -61,6 +63,9 @@ func apiCallGlobalQuote(symbol string) (globalQuote, error) {
 	err = json.NewDecoder(resp.Body).Decode(&quote)
 	if err != nil {
 		return quote.GlobalQuote, err
+	}
+	if quote.GlobalQuote.Symbol == "" {
+		return quote.GlobalQuote, fmt.Errorf("invalid symbol")
 	}
 
 	return quote.GlobalQuote, nil

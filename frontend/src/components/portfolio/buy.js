@@ -6,11 +6,13 @@ import { selectCash, setCash } from "../../features/user/userSlice";
 import {useDispatch, useSelector} from "react-redux";
 import Spinner from 'react-bootstrap/Spinner';
 import { useHistory } from "react-router-dom";
+import Alert from "react-bootstrap/Alert";
 
 export default function Buy() {
     const [ticker, setTicker] = useState("");
     const [amount, setAmount] = useState("");
     const [buying, setBuying] = useState(false);
+    const [purchaseError, setPurchaseError] =useState(false);
     const cash = useSelector(selectCash);
     const dispatch = useDispatch();
     const history = useHistory();
@@ -40,6 +42,8 @@ export default function Buy() {
     const submitPurchase = (e) => {
         e.preventDefault();
         setBuying(true);
+        setPurchaseError(false);
+
         fetch("/buy", {
             method: "POST",
             headers: {
@@ -48,18 +52,29 @@ export default function Buy() {
             },
             body: JSON.stringify({symbol: ticker, amount: parseInt(amount)})
         })
-            .then(res => res.json())
+            .then(res => {
+                if (!res.ok) {
+                    throw new Error("error submitting purchase")
+                }
+                return res.json()
+            })
             .then(stockData => {
                 dispatch(add(stockData))
                 setTicker("");
                 setAmount("");
                 dispatch(setCash(cash - stockData.price));
                 setBuying(false);
+                setPurchaseError(false);
             })
+            .catch(() => {
+                setPurchaseError(true);
+                setBuying(false);
+            });
     };
     return(
         <Form onSubmit={submitPurchase} method="POST">
             <h3>Cash - ${cash}</h3>
+            {purchaseError && <Alert variant="danger">Error submitting purchase</Alert> }
             <Form.Group controlId="ticker">
                 <Form.Control type="input" placeholder="Ticker" value={ticker} onChange={(e) => setTicker(e.target.value)}/>
             </Form.Group>
