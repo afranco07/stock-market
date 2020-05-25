@@ -28,7 +28,6 @@ func (app *App) ListStocks(w http.ResponseWriter, r *http.Request) {
 	}
 
 	rows, err := app.DB.Query(`SELECT symbol, sum(amount) as amount, sum(price * amount) as total FROM stocks WHERE account = $1 GROUP BY symbol`, c.ID)
-	//rows, err := app.DB.Query("SELECT symbol, price, amount FROM stocks WHERE account = $1", c.ID)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
