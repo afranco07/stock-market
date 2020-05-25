@@ -4,13 +4,21 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import Card from 'react-bootstrap/Card';
+import Spinner from "react-bootstrap/Spinner";
+import Alert from 'react-bootstrap/Alert'
+import { useHistory } from "react-router-dom";
 
 export default function Login() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [loggingIn, setLogin] = useState(false);
+    const [showError, setError] = useState(false);
+    const history = useHistory();
 
     const submitLogin = (e) => {
         e.preventDefault();
+        setLogin(true);
+        setError(false);
 
         fetch("/login", {
             method: "POST",
@@ -20,7 +28,18 @@ export default function Login() {
             },
             body: JSON.stringify({email, password})
         })
-            .then(res => res.json());
+            .then(res => {
+                console.log("res status", res.status);
+                if (!res.ok) {
+                    throw new Error("error logging in")
+                }
+                setError(false);
+                history.replace("/portfolio");
+            })
+            .catch(() => {
+                setError(true);
+                setLogin(false);
+            });
     };
 
     return (
@@ -30,6 +49,7 @@ export default function Login() {
                     <Card.Body>
                         <Card.Title>Sign In</Card.Title>
 
+                        {showError && <Alert variant="danger">There was an error logging in</Alert>}
                         <Form onSubmit={submitLogin}>
                             <Form.Group controlId="formBasicEmail">
                                 <Form.Label>Email address</Form.Label>
@@ -40,8 +60,9 @@ export default function Login() {
                                 <Form.Label>Password</Form.Label>
                                 <Form.Control type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)}/>
                             </Form.Group>
-                            <Button variant="primary" type="submit">
-                                Submit
+                            <Button variant="primary" type="submit" disabled={loggingIn}>
+                                {loggingIn ? <Spinner animation="border" size="sm" /> : "Submit" }
+                                {/*Submit*/}
                             </Button>
                         </Form>
                     </Card.Body>

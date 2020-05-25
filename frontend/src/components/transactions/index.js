@@ -29,7 +29,7 @@ export default function Transactions() {
             .catch(() => {
                 history.replace("/login");
             });
-    }, [dispatch])
+    }, [dispatch, history])
     return (
         <>
             <h2>Transactions</h2>

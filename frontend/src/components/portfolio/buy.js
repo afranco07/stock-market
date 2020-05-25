@@ -35,7 +35,7 @@ export default function Buy() {
             .catch(() => {
                 history.replace("/login");
             });
-    }, [dispatch]);
+    }, [dispatch, history]);
 
     const submitPurchase = (e) => {
         e.preventDefault();

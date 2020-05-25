@@ -24,7 +24,6 @@ export default function StockTable() {
                 return res.json()
             })
             .then(stockData => {
-                console.log(stockData);
                 dispatch(setStocks(stockData))
             })
             .catch(() => {
