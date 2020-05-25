@@ -46,7 +46,7 @@ export default function StockTable() {
                     <tr>
                         <td>{stock.symbol}</td>
                         <td>{stock.amount}</td>
-                        <td>{stock.price}</td>
+                        <td><span style={{color: stock.performance}}>{stock.total_price}</span></td>
                     </tr>
                 )
             })}

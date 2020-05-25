@@ -11,6 +11,13 @@ type PurchaseRequest struct {
 	Amount int    `json:"amount"`
 }
 
+type stock struct {
+	Symbol      string               `json:"symbol"`
+	Price       float32              `json:"price"`
+	Amount      int                  `json:"amount"`
+	Performance performanceIndicator `json:"performance"`
+}
+
 // PurchaseSymbol buys r.amount stocks of symbol r.symbol
 func (app *App) PurchaseSymbol(w http.ResponseWriter, r *http.Request) {
 	claims := r.Context().Value("claims")
@@ -71,7 +78,7 @@ func (app *App) PurchaseSymbol(w http.ResponseWriter, r *http.Request) {
 
 func (app *App) insertStock(quote globalQuote, user *User, quantity int) error {
 	id := uuid.New().String()
-	_, err := app.DB.Exec("INSERT INTO stocks VALUES ($1, $2, $3, $4, $5) ON CONFLICT (account, symbol) DO UPDATE SET price = stocks.price + $4, amount = stocks.amount + $5",
+	_, err := app.DB.Exec("INSERT INTO stocks VALUES ($1, $2, $3, $4, $5)",
 		id,
 		user.ID,
 		quote.Symbol,
