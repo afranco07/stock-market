@@ -36,10 +36,10 @@ export default function Transactions() {
             <Row className="justify-content-sm-center">
                 <Col xs="auto">
                     <ListGroup>
-                        {transactions.map(transaction => {
+                        {transactions.map((transaction, index) => {
                                 const text = `${transaction.action} (${transaction.symbol}) - ${transaction.amount} Shares $${transaction.price}`;
                                 return (
-                                    <ListGroup.Item>
+                                    <ListGroup.Item key={index}>
                                         {text}
                                     </ListGroup.Item>
                                 )

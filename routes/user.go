@@ -8,7 +8,6 @@ import (
 	"io"
 	"net/http"
 	"os"
-	"time"
 )
 
 const startCash = 5000
@@ -101,8 +100,8 @@ func (app *App) LoginUser(w http.ResponseWriter, r *http.Request) {
 func generateTokens(w http.ResponseWriter, userID string) error {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		//"email": user.Email,
-		"id":  userID,
-		"exp": time.Now().Add(time.Minute * 1).Unix(),
+		"id": userID,
+		//"exp": time.Now().Add(time.Minute * 1).Unix(),
 	})
 
 	tokenString, err := token.SignedString(tokenSignature)
@@ -113,8 +112,8 @@ func generateTokens(w http.ResponseWriter, userID string) error {
 	}
 
 	refreshToken := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"id":  userID,
-		"exp": time.Now().Add(time.Minute * 3).Unix(),
+		"id": userID,
+		//"exp": time.Now().Add(time.Minute * 3).Unix(),
 	})
 
 	rtString, err := refreshToken.SignedString(tokenSignature)

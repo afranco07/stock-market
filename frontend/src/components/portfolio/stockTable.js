@@ -41,9 +41,9 @@ export default function StockTable() {
             </tr>
             </thead>
             <tbody>
-            {stocks.map(stock => {
+            {stocks.map((stock, index) => {
                 return (
-                    <tr>
+                    <tr key={index}>
                         <td>{stock.symbol}</td>
                         <td>{stock.amount}</td>
                         <td><span style={{color: stock.performance}}>{stock.total_price}</span></td>
