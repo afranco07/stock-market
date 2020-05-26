@@ -37,7 +37,7 @@ export default function Transactions() {
                 <Col xs="auto">
                     <ListGroup>
                         {transactions.map((transaction, index) => {
-                                const text = `${transaction.action} (${transaction.symbol}) - ${transaction.amount} Shares $${transaction.price}`;
+                                const text = `${transaction.action} (${transaction.symbol}) - ${transaction.amount} Shares $${transaction.price.toFixed(2)}`;
                                 return (
                                     <ListGroup.Item key={index}>
                                         {text}

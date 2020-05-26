@@ -1,35 +1,10 @@
 import React, {useEffect} from 'react';
-import Table from 'react-bootstrap/Table'
-import {useDispatch, useSelector} from "react-redux";
-import {selectStocks, setStocks} from "../../features/stocks/stocksSlice";
-import { useHistory } from 'react-router-dom';
+import Table from 'react-bootstrap/Table';
 
-export default function StockTable() {
-    const dispatch = useDispatch();
-    const stocks = useSelector(selectStocks);
-    const history = useHistory();
-
+export default function StockTable({fetchList, stocks}) {
     useEffect(() => {
-        fetch("/api/list", {
-            method: "GET",
-            headers: {
-                "Accept": "application/json",
-                "Content-Type": "application/json"
-            },
-        })
-            .then(res => {
-                if (!res.ok) {
-                    throw new Error("error fetching portfolio list");
-                }
-                return res.json()
-            })
-            .then(stockData => {
-                dispatch(setStocks(stockData))
-            })
-            .catch(() => {
-                history.replace("/login");
-            })
-    }, [dispatch, history])
+        fetchList();
+    }, [fetchList])
 
     return (
         <Table>
@@ -46,7 +21,7 @@ export default function StockTable() {
                     <tr key={index}>
                         <td>{stock.symbol}</td>
                         <td>{stock.amount}</td>
-                        <td><span style={{color: stock.performance}}>{stock.total_price}</span></td>
+                        <td><span style={{color: stock.performance}}>{stock.total_price.toFixed(2)}</span></td>
                     </tr>
                 )
             })}

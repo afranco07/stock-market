@@ -1,14 +1,13 @@
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
-// import { add } from "../../features/stocks/stocksSlice"
 import { selectCash, setCash } from "../../features/user/userSlice";
 import {useDispatch, useSelector} from "react-redux";
 import Spinner from 'react-bootstrap/Spinner';
 import { useHistory } from "react-router-dom";
 import Alert from "react-bootstrap/Alert";
 
-export default function Buy() {
+export default function Buy({refreshPortfolio, refreshList}) {
     const [ticker, setTicker] = useState("");
     const [amount, setAmount] = useState("");
     const [buying, setBuying] = useState(false);
@@ -39,7 +38,7 @@ export default function Buy() {
             });
     }, [dispatch, history]);
 
-    const submitPurchase = (e) => {
+    const submitPurchase = useCallback((e) => {
         e.preventDefault();
         setBuying(true);
         setPurchaseError(false);
@@ -59,7 +58,8 @@ export default function Buy() {
                 return res.json()
             })
             .then(stockData => {
-                // dispatch(add(stockData))
+                refreshPortfolio();
+                refreshList();
                 setTicker("");
                 setAmount("");
                 dispatch(setCash(cash - stockData.price));
@@ -70,10 +70,11 @@ export default function Buy() {
                 setPurchaseError(true);
                 setBuying(false);
             });
-    };
+    }, [amount, cash, dispatch, refreshPortfolio, ticker, refreshList]);
+
     return(
         <Form onSubmit={submitPurchase} method="POST">
-            <h3>Cash - ${cash}</h3>
+            <h3>Cash - ${cash.toFixed(2)}</h3>
             {purchaseError && <Alert variant="danger">Error submitting purchase</Alert> }
             <Form.Group controlId="ticker">
                 <Form.Control type="input" placeholder="Ticker" value={ticker} onChange={(e) => setTicker(e.target.value)}/>
