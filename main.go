@@ -17,10 +17,16 @@ func main() {
 	password := os.Getenv("DB_PASSWORD")
 	dbname := os.Getenv("DB_NAME")
 	port := os.Getenv("PORT")
+	dataURL := os.Getenv("DATABASE_URL")
 	if username == "" || password == "" || dbname == "" {
 		log.Fatal("database name, username, or password not provided")
 	}
-	dataSource := fmt.Sprintf("user=%s password=%s dbname=%s sslmode=disable", username, password, dbname)
+	var dataSource string
+	if dataURL != "" {
+		dataSource = dataURL
+	} else {
+		dataSource = fmt.Sprintf("user=%s password=%s dbname=%s sslmode=disable", username, password, dbname)
+	}
 	db, err := sql.Open(driverName, dataSource)
 	if err != nil {
 		log.Fatal(err)
