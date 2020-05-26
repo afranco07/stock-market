@@ -1,1 +1,1 @@
-web: npm run build --prefix frontend && bin/stock-market
+web: bin/stock-market
