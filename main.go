@@ -16,6 +16,7 @@ func main() {
 	username := os.Getenv("DB_USERNAME")
 	password := os.Getenv("DB_PASSWORD")
 	dbname := os.Getenv("DB_NAME")
+	port := os.Getenv("PORT")
 	if username == "" || password == "" || dbname == "" {
 		log.Fatal("database name, username, or password not provided")
 	}
@@ -53,5 +54,5 @@ func main() {
 		http.ServeFile(w, r, "frontend/build/index.html")
 	})
 
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	log.Fatal(http.ListenAndServe(":"+port, nil))
 }
