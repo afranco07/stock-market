@@ -1,5 +1,5 @@
 export default async function isAuthenticated() {
-    const resp = await fetch("/auth", {
+    const resp = await fetch("/api/auth", {
         method: "POST",
     })
 

@@ -23,7 +23,7 @@ export default function Login() {
         setLogin(true);
         setError(false);
 
-        fetch("/login", {
+        fetch("/api/login", {
             method: "POST",
             headers: {
                 "Accept": "application/json",

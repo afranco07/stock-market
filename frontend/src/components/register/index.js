@@ -21,7 +21,7 @@ export default function Register() {
         setError(false);
         setSuccess(false);
 
-        fetch("/createuser", {
+        fetch("/api/createuser", {
             method: "POST",
             headers: {
                 "Accept": "application/json",

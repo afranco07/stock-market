@@ -12,7 +12,7 @@ export default function Transactions() {
     const transactions = useSelector(selectTransactions);
 
     useEffect(() => {
-        fetch("/transactions", {
+        fetch("/api/transactions", {
             method: "GET",
             headers: {
                 "Accept": "application/json",

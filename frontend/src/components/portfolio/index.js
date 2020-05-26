@@ -13,7 +13,7 @@ export default function Portfolio() {
     const history = useHistory();
 
     useEffect(() => {
-        fetch("/portfolio", {
+        fetch("/api/portfolio", {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",

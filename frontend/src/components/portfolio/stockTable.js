@@ -10,7 +10,7 @@ export default function StockTable() {
     const history = useHistory();
 
     useEffect(() => {
-        fetch("/list", {
+        fetch("/api/list", {
             method: "GET",
             headers: {
                 "Accept": "application/json",

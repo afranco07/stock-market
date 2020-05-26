@@ -18,7 +18,7 @@ export default function Buy() {
     const history = useHistory();
 
     useEffect(() => {
-        fetch("/cash", {
+        fetch("/api/cash", {
             method: "GET",
             headers: {
                 "Content-TYpe": "application/json",
@@ -44,7 +44,7 @@ export default function Buy() {
         setBuying(true);
         setPurchaseError(false);
 
-        fetch("/buy", {
+        fetch("/api/buy", {
             method: "POST",
             headers: {
                 "Accept": "application/json",
