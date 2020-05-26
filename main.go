@@ -27,11 +27,31 @@ func main() {
 	defer db.Close()
 	app := routes.App{DB: db}
 
-	http.HandleFunc("/createuser", app.CreateUser)
-	http.HandleFunc("/login", app.LoginUser)
+	// api routes
+	http.HandleFunc("/api/createuser", app.CreateUser)
+	http.HandleFunc("/api/login", app.LoginUser)
+	http.HandleFunc("/api/auth", app.CheckAuth)
 
-	http.Handle("/buy", app.Authenticate(http.HandlerFunc(app.PurchaseSymbol)))
-	http.Handle("/list", app.Authenticate(http.HandlerFunc(app.ListStocks)))
+	http.Handle("/api/buy", app.Authenticate(http.HandlerFunc(app.PurchaseSymbol)))
+	http.Handle("/api/list", app.Authenticate(http.HandlerFunc(app.ListStocks)))
+	http.Handle("/api/transactions", app.Authenticate(http.HandlerFunc(app.ListTransactions)))
+	http.Handle("/api/cash", app.Authenticate(http.HandlerFunc(app.GetCash)))
+	http.Handle("/api/portfolio", app.Authenticate(http.HandlerFunc(app.GetPortfolioPerformance)))
+
+	// client side routes
+	http.Handle("/", http.FileServer(http.Dir("frontend/build")))
+	http.HandleFunc("/portfolio", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "frontend/build/index.html")
+	})
+	http.HandleFunc("/login", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "frontend/build/index.html")
+	})
+	http.HandleFunc("/register", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "frontend/build/index.html")
+	})
+	http.HandleFunc("/transactions", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "frontend/build/index.html")
+	})
 
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }

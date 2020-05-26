@@ -41,6 +41,8 @@ func (app *App) CreateUser(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(err.Error()))
 		return
 	}
+
+	w.WriteHeader(http.StatusCreated)
 }
 
 // LoginUser checks jwt, logs in the user, and sets jwt cookie
@@ -51,23 +53,88 @@ func (app *App) LoginUser(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(err.Error()))
 		return
 	}
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"email": user.Email,
-		"id":    user.ID,
-	})
 
-	tokenString, err := token.SignedString(tokenSignature)
+	err = generateTokens(w, user.ID)
 	if err != nil {
 		w.WriteHeader(http.StatusUnauthorized)
 		w.Write([]byte(err.Error()))
 		return
+	}
+	//token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+	//	//"email": user.Email,
+	//	"id":    user.ID,
+	//	"exp":   time.Now().Add(time.Minute * 1).Unix(),
+	//})
+	//
+	//tokenString, err := token.SignedString(tokenSignature)
+	//if err != nil {
+	//	w.WriteHeader(http.StatusUnauthorized)
+	//	w.Write([]byte(err.Error()))
+	//	return
+	//}
+	//
+	//refreshToken := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+	//	"id": user.ID,
+	//	"exp": time.Now().Add(time.Minute * 3).Unix(),
+	//})
+	//
+	//rtString, err := refreshToken.SignedString(tokenSignature)
+	//if err != nil {
+	//	w.WriteHeader(http.StatusUnauthorized)
+	//	w.Write([]byte(err.Error()))
+	//	return
+	//}
+	//
+	//cookie := http.Cookie{
+	//	Name:  "jwt-token",
+	//	Value: tokenString,
+	//}
+	//refreshCookie := http.Cookie{
+	//	Name:  "jwt-refresh-token",
+	//	Value: rtString,
+	//}
+	//http.SetCookie(w, &cookie)
+	//http.SetCookie(w, &refreshCookie)
+}
+
+func generateTokens(w http.ResponseWriter, userID string) error {
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		//"email": user.Email,
+		"id": userID,
+		//"exp": time.Now().Add(time.Minute * 1).Unix(),
+	})
+
+	tokenString, err := token.SignedString(tokenSignature)
+	if err != nil {
+		//w.WriteHeader(http.StatusUnauthorized)
+		//w.Write([]byte(err.Error()))
+		return err
+	}
+
+	refreshToken := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"id": userID,
+		//"exp": time.Now().Add(time.Minute * 3).Unix(),
+	})
+
+	rtString, err := refreshToken.SignedString(tokenSignature)
+	if err != nil {
+		//w.WriteHeader(http.StatusUnauthorized)
+		//w.Write([]byte(err.Error()))
+		return err
 	}
 
 	cookie := http.Cookie{
 		Name:  "jwt-token",
 		Value: tokenString,
 	}
+	refreshCookie := http.Cookie{
+		Name:  "jwt-refresh-token",
+		Value: rtString,
+	}
 	http.SetCookie(w, &cookie)
+	http.SetCookie(w, &refreshCookie)
+
+	return nil
 }
 
 func (app *App) getUser(r io.Reader) (User, error) {
@@ -106,4 +173,38 @@ func (app *App) getUserByID(id string) (User, error) {
 	}
 
 	return u, nil
+}
+
+// GetCash returns the users current balance
+func (app *App) GetCash(w http.ResponseWriter, r *http.Request) {
+	claims := r.Context().Value("claims")
+	if claims == nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	c, ok := claims.(*jwtClaims)
+	if !ok {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("error type asserting claims"))
+		return
+	}
+
+	u, err := app.getUserByID(c.ID)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	jsonBytes, err := json.Marshal(struct {
+		Cash float32 `json:"cash"`
+	}{u.Cash})
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(jsonBytes)
 }

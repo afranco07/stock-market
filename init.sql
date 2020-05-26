@@ -1,10 +1,8 @@
 -- CREATE DATABASE market;
--- CREATE USER docker;
--- GRANT ALL PRIVILEGES ON DATABASE market TO docker;
 
 CREATE TABLE account (
     id uuid PRIMARY KEY,
-    email varchar(250),
+    email varchar(250) UNIQUE,
     password varchar(250),
     cash float
 );
@@ -15,4 +13,13 @@ CREATE TABLE stocks (
     symbol varchar(6),
     price float,
     amount int
+);
+
+CREATE TABLE transactions (
+    id SERIAL PRIMARY KEY,
+    account uuid references account(id),
+    action varchar(4),
+    symbol varchar(6),
+    amount int,
+    price float
 );
