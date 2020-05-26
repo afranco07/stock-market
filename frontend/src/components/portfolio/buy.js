@@ -1,7 +1,7 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
-import { selectCash, setCash } from "../../features/user/userSlice";
+import { selectCash, setCash, setAuth } from "../../features/user/userSlice";
 import {useDispatch, useSelector} from "react-redux";
 import Spinner from 'react-bootstrap/Spinner';
 import { useHistory } from "react-router-dom";
@@ -35,6 +35,7 @@ export default function Buy({refreshPortfolio, refreshList}) {
             })
             .catch(() => {
                 history.replace("/login");
+                dispatch(setAuth(false));
             });
     }, [dispatch, history]);
 

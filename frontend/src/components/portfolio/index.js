@@ -7,6 +7,7 @@ import { selectCash, setCash } from "../../features/portfolio/portfolioSlice";
 import {useDispatch, useSelector} from "react-redux";
 import { useHistory } from "react-router-dom";
 import {selectStocks, setStocks} from "../../features/stocks/stocksSlice";
+import {setAuth} from "../../features/user/userSlice";
 
 export default function Portfolio() {
     const cash = useSelector(selectCash);
@@ -15,7 +16,6 @@ export default function Portfolio() {
     const history = useHistory();
 
     const fetchPortfolio = useCallback(()=> {
-        console.log("fetching...");
         fetch("/api/portfolio", {
             method: "GET",
             headers: {
@@ -30,10 +30,11 @@ export default function Portfolio() {
                 return res.json();
             })
             .then(cash => {
-                dispatch(setCash(cash.total_cash))
+                dispatch(setCash(cash.total_cash));
             })
             .catch(() => {
-                history.replace("/login")
+                history.replace("/login");
+                dispatch(setAuth(false));
             });
     }, [dispatch, history]);
 
@@ -56,6 +57,7 @@ export default function Portfolio() {
             })
             .catch(() => {
                 history.replace("/login");
+                dispatch(setAuth(false));
             })
     }, [dispatch, history])
 
