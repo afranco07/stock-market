@@ -2,9 +2,9 @@ package routes
 
 import (
 	"encoding/json"
-	"errors"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/google/uuid"
+	"golang.org/x/crypto/bcrypt"
 	"io"
 	"net/http"
 	"os"
@@ -35,8 +35,15 @@ func (app *App) CreateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	passwordBytes, err := bcrypt.GenerateFromPassword([]byte(u.Password), 14)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+		return
+	}
+
 	u.ID = uuid.New().String()
-	_, err = app.DB.Exec("INSERT INTO account VALUES ($1, $2, $3, $4, $5)", u.ID, u.Name, u.Email, u.Password, startCash)
+	_, err = app.DB.Exec("INSERT INTO account VALUES ($1, $2, $3, $4, $5)", u.ID, u.Name, u.Email, string(passwordBytes), startCash)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte(err.Error()))
@@ -120,9 +127,13 @@ func (app *App) getUser(r io.Reader) (User, error) {
 		return requestUser, err
 	}
 
-	if requestUser.Password != queryUser.Password {
-		return requestUser, errors.New("email or password incorrect")
+	err = bcrypt.CompareHashAndPassword([]byte(queryUser.Password), []byte(requestUser.Password))
+	if err != nil {
+		return requestUser, err
 	}
+	//if requestUser.Password != queryUser.Password {
+	//	return requestUser, errors.New("email or password incorrect")
+	//}
 
 	return queryUser, nil
 }
