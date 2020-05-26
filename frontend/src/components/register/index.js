@@ -27,7 +27,7 @@ export default function Register() {
                 "Accept": "application/json",
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify({email, password})
+            body: JSON.stringify({email, password, name})
         })
             .then(res => {
                 if (!res.ok) {

@@ -17,6 +17,7 @@ var tokenSignature = []byte(os.Getenv("TOKEN_SIG"))
 // User represents the user table
 type User struct {
 	ID       string  `json:"id,omitempty"`
+	Name     string  `json:"name,omitempty"`
 	Email    string  `json:"email"`
 	Password string  `json:"password"`
 	Cash     float32 `json:"cash,omitempty"`
@@ -35,7 +36,7 @@ func (app *App) CreateUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	u.ID = uuid.New().String()
-	_, err = app.DB.Exec("INSERT INTO account VALUES ($1, $2, $3, $4)", u.ID, u.Email, u.Password, startCash)
+	_, err = app.DB.Exec("INSERT INTO account VALUES ($1, $2, $3, $4, $5)", u.ID, u.Name, u.Email, u.Password, startCash)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte(err.Error()))
@@ -60,41 +61,6 @@ func (app *App) LoginUser(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(err.Error()))
 		return
 	}
-	//token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-	//	//"email": user.Email,
-	//	"id":    user.ID,
-	//	"exp":   time.Now().Add(time.Minute * 1).Unix(),
-	//})
-	//
-	//tokenString, err := token.SignedString(tokenSignature)
-	//if err != nil {
-	//	w.WriteHeader(http.StatusUnauthorized)
-	//	w.Write([]byte(err.Error()))
-	//	return
-	//}
-	//
-	//refreshToken := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-	//	"id": user.ID,
-	//	"exp": time.Now().Add(time.Minute * 3).Unix(),
-	//})
-	//
-	//rtString, err := refreshToken.SignedString(tokenSignature)
-	//if err != nil {
-	//	w.WriteHeader(http.StatusUnauthorized)
-	//	w.Write([]byte(err.Error()))
-	//	return
-	//}
-	//
-	//cookie := http.Cookie{
-	//	Name:  "jwt-token",
-	//	Value: tokenString,
-	//}
-	//refreshCookie := http.Cookie{
-	//	Name:  "jwt-refresh-token",
-	//	Value: rtString,
-	//}
-	//http.SetCookie(w, &cookie)
-	//http.SetCookie(w, &refreshCookie)
 }
 
 func generateTokens(w http.ResponseWriter, userID string) error {
@@ -147,9 +113,9 @@ func (app *App) getUser(r io.Reader) (User, error) {
 
 	var queryUser User
 	err = app.DB.QueryRow(
-		"SELECT id, email, password, cash FROM account WHERE email = $1",
+		"SELECT id, name, email, password, cash FROM account WHERE email = $1",
 		requestUser.Email,
-	).Scan(&queryUser.ID, &queryUser.Email, &queryUser.Password, &queryUser.Cash)
+	).Scan(&queryUser.ID, &queryUser.Name, &queryUser.Email, &queryUser.Password, &queryUser.Cash)
 	if err != nil {
 		return requestUser, err
 	}
@@ -165,9 +131,9 @@ func (app *App) getUserByID(id string) (User, error) {
 	var u User
 
 	err := app.DB.QueryRow(
-		"SELECT id, email, password, cash FROM account WHERE id = $1",
+		"SELECT id, name, email, password, cash FROM account WHERE id = $1",
 		id,
-	).Scan(&u.ID, &u.Email, &u.Password, &u.Cash)
+	).Scan(&u.ID, &u.Name, &u.Email, &u.Password, &u.Cash)
 	if err != nil {
 		return u, err
 	}
