@@ -55,6 +55,13 @@ func (app *App) PurchaseSymbol(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// make sure user has enough funds
+	if quote.Price*float32(pr.Amount) > user.Cash {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("not enough funds"))
+		return
+	}
+
 	err = app.insertStock(quote, &user, pr.Amount)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
