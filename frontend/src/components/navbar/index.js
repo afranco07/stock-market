@@ -13,8 +13,8 @@ export default function NavBar() {
     const dispatch = useDispatch();
 
     const handleLogout = () => {
-        document.cookie = "jwt-token=";
-        document.cookie = "jwt-refresh-token=";
+        document.cookie = "jwt-token= ;";
+        document.cookie = "jwt-refresh-token= ;";
         dispatch(setAuth(false));
         history.push("/login");
     };
