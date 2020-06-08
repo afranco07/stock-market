@@ -61,9 +61,9 @@ export default function Buy({refreshPortfolio, refreshList}) {
             .then(stockData => {
                 refreshPortfolio();
                 refreshList();
+                dispatch(setCash(cash - (stockData.price * +amount)));
                 setTicker("");
                 setAmount("");
-                dispatch(setCash(cash - stockData.price));
                 setBuying(false);
                 setPurchaseError(false);
             })
