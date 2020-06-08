@@ -54,7 +54,7 @@ export default function Register() {
             <Col>
                 <Card style={{marginTop: "20px"}}>
                     <Card.Body>
-                        <Card.Title>Sign In</Card.Title>
+                        <Card.Title>Register</Card.Title>
                         {showError && <Alert variant="danger">Could not create</Alert> }
                         {showSuccess && <Alert variant="success">User created successfully!</Alert> }
                         <Form onSubmit={submitData}>

@@ -97,12 +97,14 @@ func generateTokens(w http.ResponseWriter, userID string) error {
 	}
 
 	cookie := http.Cookie{
-		Name:  "jwt-token",
-		Value: tokenString,
+		Name:     "jwt-token",
+		Value:    tokenString,
+		SameSite: http.SameSiteLaxMode,
 	}
 	refreshCookie := http.Cookie{
-		Name:  "jwt-refresh-token",
-		Value: rtString,
+		Name:     "jwt-refresh-token",
+		Value:    rtString,
+		SameSite: http.SameSiteLaxMode,
 	}
 	http.SetCookie(w, &cookie)
 	http.SetCookie(w, &refreshCookie)
