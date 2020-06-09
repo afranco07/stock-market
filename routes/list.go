@@ -43,7 +43,7 @@ func (app *App) ListStocks(w http.ResponseWriter, r *http.Request) {
 			w.Write([]byte(err.Error()))
 			return
 		}
-		s.Performance, err = app.checkPerformance(s.Symbol, c.ID, s.TotalPrice)
+		s.Performance, err = app.checkPerformance(s.Symbol, c.ID, &s.TotalPrice)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			errBytes, _ := json.Marshal(&struct {
@@ -73,7 +73,7 @@ const (
 	neutralPerformance  performanceIndicator = "grey"
 )
 
-func (app *App) checkPerformance(symbol, id string, price float32) (performanceIndicator, error) {
+func (app *App) checkPerformance(symbol, id string, price *float32) (performanceIndicator, error) {
 	quote, err := apiCallGlobalQuote(symbol)
 	if err != nil {
 		return neutralPerformance, err
@@ -90,11 +90,11 @@ func (app *App) checkPerformance(symbol, id string, price float32) (performanceI
 	}
 	currentTotalPrice := quote.Price * float32(total)
 
-	if price > currentTotalPrice {
+	if *price > currentTotalPrice {
 		return negativePerformance, nil
 	}
 
-	if currentTotalPrice > price {
+	if currentTotalPrice > *price {
 		return positivePerformance, nil
 	}
 
