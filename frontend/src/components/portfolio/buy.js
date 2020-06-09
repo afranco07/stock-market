@@ -53,7 +53,7 @@ export default function Buy({refreshPortfolio, refreshList}) {
             body: JSON.stringify({symbol: ticker, amount: parseInt(amount)})
         })
             .then(res => {
-                if (res.status === 401) {
+                if (!res.ok) {
                     throw new Error("error submitting purchase")
                 }
                 return res.json()
