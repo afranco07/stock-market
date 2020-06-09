@@ -91,11 +91,11 @@ func (app *App) checkPerformance(symbol, id string, price float32) (performanceI
 	currentTotalPrice := quote.Price * float32(total)
 
 	if price > currentTotalPrice {
-		return positivePerformance, nil
+		return negativePerformance, nil
 	}
 
 	if currentTotalPrice > price {
-		return negativePerformance, nil
+		return positivePerformance, nil
 	}
 
 	return neutralPerformance, nil
