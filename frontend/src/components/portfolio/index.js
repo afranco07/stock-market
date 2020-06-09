@@ -24,13 +24,15 @@ export default function Portfolio() {
             }
         })
             .then(res => {
-                if (!res.ok) {
+                if (res.status === 401) {
                     throw new Error("error getting portfolio cash")
                 }
                 return res.json();
             })
             .then(cash => {
-                dispatch(setCash(cash.total_cash));
+                if (cash.total_cash) {
+                    dispatch(setCash(cash.total_cash));
+                }
             })
             .catch(() => {
                 history.replace("/login");
@@ -47,13 +49,15 @@ export default function Portfolio() {
             },
         })
             .then(res => {
-                if (!res.ok) {
+                if (res.status === 401) {
                     throw new Error("error fetching portfolio list");
                 }
                 return res.json()
             })
             .then(stockData => {
-                dispatch(setStocks(stockData))
+                if (!stockData["error"]) {
+                    dispatch(setStocks(stockData))
+                }
             })
             .catch(() => {
                 history.replace("/login");

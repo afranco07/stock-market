@@ -16,16 +16,12 @@ const (
 	baseURL         = "https://www.alphavantage.co"
 	defaultInterval = "5min"
 	apiLink         = "%s/query?function=%s&symbol=%s&interval=%s&apikey=%s"
-	searchLink      = "%s/query?function=%s&keywords=%s&apikey=%s"
 )
 
 type apiFunction string
 
 const (
-	//functionIntraDay    apiFunction = "TIME_SERIES_INTRADAY"
-	//functionSeriesDaily apiFunction = "TIME_SERIES_DAILY"
-	functionQuote  apiFunction = "GLOBAL_QUOTE"
-	functionSearch apiFunction = "SYMBOL_SEARCH"
+	functionQuote apiFunction = "GLOBAL_QUOTE"
 )
 
 type quoteResponse struct {

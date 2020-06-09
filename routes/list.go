@@ -46,7 +46,11 @@ func (app *App) ListStocks(w http.ResponseWriter, r *http.Request) {
 		s.Performance, err = app.checkPerformance(s.Symbol, c.ID, s.TotalPrice)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
-			w.Write([]byte(err.Error()))
+			errBytes, _ := json.Marshal(&struct {
+				Error string `json:"error"`
+			}{err.Error()})
+			w.Header().Set("Content-Type", "application/json")
+			w.Write(errBytes)
 			return
 		}
 		stocks = append(stocks, s)

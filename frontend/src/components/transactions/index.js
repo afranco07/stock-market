@@ -21,7 +21,7 @@ export default function Transactions() {
             },
         })
             .then(res => {
-                if (!res.ok) {
+                if (res.status === 401) {
                     throw new Error("error retrieving transactions");
                 }
                 return res.json();

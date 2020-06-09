@@ -49,7 +49,11 @@ func (app *App) GetPortfolioPerformance(w http.ResponseWriter, r *http.Request) 
 		quote, err := apiCallGlobalQuote(v.Symbol)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
-			w.Write([]byte(err.Error()))
+			errBytes, _ := json.Marshal(&struct {
+				Error string `json:"error"`
+			}{err.Error()})
+			w.Header().Set("Content-Type", "application/json")
+			w.Write(errBytes)
 			return
 		}
 		totalCash += quote.Price * float32(v.Amount)

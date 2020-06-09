@@ -25,7 +25,7 @@ export default function Buy({refreshPortfolio, refreshList}) {
             }
         })
             .then(res => {
-                if (!res.ok) {
+                if (res.status === 401) {
                     throw new Error("error getting balance");
                 }
                 return res.json();
@@ -53,7 +53,7 @@ export default function Buy({refreshPortfolio, refreshList}) {
             body: JSON.stringify({symbol: ticker, amount: parseInt(amount)})
         })
             .then(res => {
-                if (!res.ok) {
+                if (res.status === 401) {
                     throw new Error("error submitting purchase")
                 }
                 return res.json()
