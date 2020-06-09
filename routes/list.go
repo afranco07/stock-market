@@ -98,5 +98,7 @@ func (app *App) checkPerformance(symbol, id string, price *float32) (performance
 		return positivePerformance, nil
 	}
 
+	*price = currentTotalPrice
+
 	return neutralPerformance, nil
 }
